@@ -41,7 +41,8 @@ int main() {
 	for (const auto &source : sources) {
 		archive.AddText(source.filename, source.contents);
 	}
-	archive.AddFile("MenuPointer.png");
+
+	archive.AddFile("assets/textures/MenuPointer.png");
 
 	entries = archive.GetEntries();
 	for (const auto &entry : entries) {
