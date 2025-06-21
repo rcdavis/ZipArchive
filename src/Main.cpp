@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <zip.h>
@@ -60,6 +61,17 @@ int main() {
 	for (const auto &entry : entries) {
 		std::cout << "File" << std::endl;
 		std::cout << "  Name: " << entry << std::endl;
+	}
+
+	std::filesystem::create_directory("Copies");
+	for (const auto& textureFile : files) {
+		auto contents = archive.GetData(textureFile);
+		std::filesystem::path filename = "Copies";
+		filename /= textureFile.filename();
+		std::ofstream file(filename, std::ios::binary);
+		if (file) {
+			file.write(contents.data(), contents.size());
+		}
 	}
 
 	return 0;

@@ -61,7 +61,6 @@ std::string ZipArchive::GetText(const std::filesystem::path &filepath) {
 		return {};
 	}
 
-	// TODO: Why does this fail when index looks to be correct?
 	zip_file_t *zf = zip_fopen_index(mArchive, index, 0);
 	if (!zf) {
 		std::cerr << "Failed to open file " << filepath << std::endl;
@@ -69,6 +68,33 @@ std::string ZipArchive::GetText(const std::filesystem::path &filepath) {
 	}
 
 	std::string contents(st.size, '\0');
+	zip_fread(zf, std::data(contents), st.size);
+	zip_fclose(zf);
+
+	return contents;
+}
+
+std::vector<char> ZipArchive::GetData(const std::filesystem::path& filepath) {
+	zip_int64_t index = zip_name_locate(mArchive, filepath.c_str(), 0);
+	if (index < 0) {
+		std::cerr << "Failed to find " << filepath << " within the ZIP archive" << std::endl;
+		return {};
+	}
+
+	zip_stat_t st;
+	zip_stat_init(&st);
+	if (zip_stat_index(mArchive, index, 0, &st) != 0) {
+		std::cerr << "Failed to get info for file " << filepath << std::endl;
+		return {};
+	}
+
+	zip_file_t *zf = zip_fopen_index(mArchive, index, 0);
+	if (!zf) {
+		std::cerr << "Failed to open file " << filepath << std::endl;
+		return {};
+	}
+
+	std::vector<char> contents(st.size);
 	zip_fread(zf, std::data(contents), st.size);
 	zip_fclose(zf);
 
