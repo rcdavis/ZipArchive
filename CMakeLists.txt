@@ -10,10 +10,14 @@ add_executable(ZipArchive
     src/ZipArchive.cpp
 )
 
-add_custom_command(TARGET ZipArchive POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/assets
-    $<TARGET_FILE_DIR:ZipArchive>/assets)
+file(COPY ${CMAKE_SOURCE_DIR}/assets
+     DESTINATION ${CMAKE_BINARY_DIR})
+
+# Copy for every build. Probably good for shaders.
+#add_custom_command(TARGET ZipArchive POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_directory
+#    ${CMAKE_SOURCE_DIR}/assets/shaders
+#    $<TARGET_FILE_DIR:ZipArchive>/assets/shaders)
 
 target_include_directories(ZipArchive PRIVATE
     ${LIBZIP_INCLUDE_DIRS}
