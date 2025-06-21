@@ -12,7 +12,7 @@ struct ZipSourceContents {
 };
 
 int main() {
-	std::vector<ZipSourceContents> sources = {
+	std::vector<std::pair<std::filesystem::path, std::string>> sources = {
 		{ "Hello.txt", "Hello from libzip" },
 		{ "Bye.txt", "Bye from libzip" },
 		{ "Dir/First.txt", "Text within Dir" }
@@ -20,9 +20,7 @@ int main() {
 
 	ZipArchive archive;
 	archive.Open("Output.zip", true);
-	for (const auto &source : sources) {
-		archive.AddText(source.filename, source.contents);
-	}
+	archive.AddTextEntries(sources);
 
 	// TODO: Why does GetText not work without closing and reopening the zip archive?
 	// Can I not write and then read from the zip archive?
@@ -38,11 +36,14 @@ int main() {
 	}
 
 	archive.Open("Output2.zip", true);
-	for (const auto &source : sources) {
-		archive.AddText(source.filename, source.contents);
-	}
+	archive.AddTextEntries(sources);
+
+	std::vector<std::filesystem::path> files = {
+		"assets/textures/MenuPointer.png"
+	};
 
 	archive.AddFile("assets/textures/MenuPointer.png");
+	archive.AddFiles(files);
 
 	entries = archive.GetEntries();
 	for (const auto &entry : entries) {

@@ -75,6 +75,16 @@ std::string ZipArchive::GetText(const std::filesystem::path &filepath) {
 	return contents;
 }
 
+bool ZipArchive::AddTextEntries(const std::vector<std::pair<std::filesystem::path, std::string>>& entries) {
+	for (const auto& entry : entries)
+		AddText(entry.first, entry.second);
+}
+
+bool ZipArchive::AddFiles(const std::vector<std::filesystem::path>& files) {
+	for (const auto& file : files)
+		AddFile(file);
+}
+
 bool ZipArchive::AddText(const std::filesystem::path &filepath, const std::string &text) {
 	zip_source_t *source = zip_source_buffer(mArchive, std::data(text), std::size(text), 0);
 	if (!source) {
