@@ -76,13 +76,19 @@ std::string ZipArchive::GetText(const std::filesystem::path &filepath) {
 }
 
 bool ZipArchive::AddTextEntries(const std::vector<std::pair<std::filesystem::path, std::string>>& entries) {
-	for (const auto& entry : entries)
-		AddText(entry.first, entry.second);
+	for (const auto& entry : entries) {
+		if (!AddText(entry.first, entry.second))
+			return false;
+	}
+	return true;
 }
 
 bool ZipArchive::AddFiles(const std::vector<std::filesystem::path>& files) {
-	for (const auto& file : files)
-		AddFile(file);
+	for (const auto& file : files) {
+		if (!AddFile(file))
+			return false;
+	}
+	return true;
 }
 
 bool ZipArchive::AddText(const std::filesystem::path &filepath, const std::string &text) {
@@ -102,15 +108,14 @@ bool ZipArchive::AddText(const std::filesystem::path &filepath, const std::strin
 }
 
 bool ZipArchive::AddFile(const std::filesystem::path &filepath) {
-	std::ifstream file(filepath, std::ios::binary);
-	if (!file) {
-		std::cerr << "Failed to open " << filepath << std::endl;
+	if (!std::filesystem::exists(filepath)) {
+		std::cerr << filepath << " could not be found" << std::endl;
 		return false;
 	}
 
-	std::vector<char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-	zip_source_t *source = zip_source_buffer(mArchive, std::data(buffer), std::size(buffer), 0);
+	// TODO: passing -1 for len is deprecated but currently don't have
+	// latest libzip for ZIP_LENGTH_TO_END.
+	zip_source_t* source = zip_source_file(mArchive, filepath.c_str(), 0, -1);
 	if (!source) {
 		std::cerr << "Failed to create zip source for " << filepath << std::endl;
 		return false;

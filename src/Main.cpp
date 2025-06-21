@@ -25,6 +25,12 @@ int main() {
 	// TODO: Why does GetText not work without closing and reopening the zip archive?
 	// Can I not write and then read from the zip archive?
 	// Or is it the flag I pass to Open?
+	// This looks to be intentional. According to Copilot: When you add files to a ZIP archive
+	// using libzip, the changes aren’t immediately committed to disk. Instead, libzip buffers
+	// modifications and only writes them out when you call zip_close(). Until then,
+	// the archive is in a sort of “pending” state. So if you try to read from the same
+	// archive before closing it, you’re essentially accessing an incomplete or inconsistent
+	// structure—which can lead to undefined behavior or outright errors.
 	archive.Open("Output.zip");
 
 	auto entries = archive.GetEntries();
@@ -39,11 +45,16 @@ int main() {
 	archive.AddTextEntries(sources);
 
 	std::vector<std::filesystem::path> files = {
-		"assets/textures/MenuPointer.png"
+		"assets/textures/MenuPointer.png",
+		"assets/textures/MenuPlay.png",
+		"assets/textures/MenuOptions.png",
+		"assets/textures/MenuCredits.png",
+		"assets/textures/MenuExit.png"
 	};
 
-	archive.AddFile("assets/textures/MenuPointer.png");
 	archive.AddFiles(files);
+
+	archive.Open("Output2.zip");
 
 	entries = archive.GetEntries();
 	for (const auto &entry : entries) {
