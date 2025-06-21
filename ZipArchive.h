@@ -8,20 +8,20 @@
 
 class ZipArchive {
 public:
-    ZipArchive() = default;
-    ~ZipArchive();
+	ZipArchive() = default;
+	~ZipArchive();
 
-    bool Open(const std::filesystem::path& filepath, bool createNew = false);
-    void Close();
+	bool Open(const std::filesystem::path &filepath, bool createNew = false);
+	void Close();
 
-    std::vector<std::string> GetEntries();
+	std::vector<std::string> GetEntries();
 
-    std::string GetText(const std::filesystem::path& filepath);
+	std::string GetText(const std::filesystem::path &filepath);
 
-    bool AddText(const std::filesystem::path& filepath, const std::string& text);
+	bool AddText(const std::filesystem::path &filepath, const std::string &text);
 
-    bool AddFile(const std::filesystem::path& filepath);
+	bool AddFile(const std::filesystem::path &filepath);
 
 private:
-    zip_t* mArchive = nullptr;
+	zip_t *mArchive = nullptr;
 };
