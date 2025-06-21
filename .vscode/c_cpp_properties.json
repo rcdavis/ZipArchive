@@ -7,9 +7,7 @@
 				"/usr/include",
 				"/usr/local/include"
 			],
-			"defines": [
-				"ASSET_DIR=\"assets\""
-			],
+			"defines": [],
 			"compilerPath": "/usr/bin/gcc",
 			"cStandard": "c17",
 			"cppStandard": "c++17",
