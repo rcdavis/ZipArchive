@@ -5,13 +5,13 @@ add_executable(App
     src/ZipArchive.cpp
 )
 
-file(COPY ${CMAKE_SOURCE_DIR}/assets
-     DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res
+     DESTINATION ${CMAKE_BINARY_DIR}/App)
 
 target_include_directories(App PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(App PRIVATE
-    libzip
+    zip
 )

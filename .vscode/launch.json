@@ -2,13 +2,13 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "GDB Debugging",
+			"name": "Launch App",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/ZipArchive",
+			"program": "${command:cmake.launchTargetPath}",
 			"args": [],
 			"stopAtEntry": false,
-			"cwd": "${workspaceFolder}/build",
+			"cwd": "${command:cmake.launchTargetDirectory}",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
@@ -20,15 +20,7 @@
 				}
 			],
 			"miDebuggerPath": "/usr/bin/gdb",
-			"preLaunchTask": "Build ZipArchive"
-		},
-		{
-			"name": "Run Program",
-			"type": "cppdbg",
-			"request": "launch",
-			"program": "${workspaceFolder}/build/ZipArchive",
-			"cwd": "${workspaceFolder}/build",
-			"preLaunchTask": "Build ZipArchive"
+			"preLaunchTask": "Build All"
 		}
 	]
 }

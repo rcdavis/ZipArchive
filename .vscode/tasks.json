@@ -2,13 +2,13 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Build ZipArchive",
+			"label": "Build All",
 			"type": "shell",
-			"command": "make",
-			"args": ["-j12"],
-			"options": {
-				"cwd": "${workspaceFolder}/build"
-			},
+			"command": "cmake",
+			"args": [
+				"--build",
+				"${command:cmake.buildDirectory}"
+			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
