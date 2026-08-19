@@ -2,7 +2,6 @@
 #include "ZipArchive.h"
 
 #include <iostream>
-#include <fstream>
 
 ZipArchive::~ZipArchive() {
 	Close();
@@ -16,9 +15,10 @@ bool ZipArchive::Open(const char* const filepath, bool createNew) {
 	int errorCode = 0;
 	mArchive = zip_open(filepath, openFlags, &errorCode);
 	if (!mArchive) {
-		char errorMessage[1024] = {};
-		zip_error_to_str(errorMessage, sizeof(errorMessage), errorCode, errno);
-		std::cerr << "Failed to open ZIP archive " << filepath << " with error: " << errorMessage << std::endl;
+		zip_error_t error;
+		zip_error_init_with_code(&error, errorCode);
+		std::cerr << "Failed to open ZIP archive " << filepath << " with error: " << zip_error_strerror(&error) << std::endl;
+		zip_error_fini(&error);
 		return false;
 	}
 
