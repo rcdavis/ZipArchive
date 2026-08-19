@@ -35,7 +35,7 @@ int main() {
 
 	auto entries = archive.GetEntries();
 	for (const auto &entry : entries) {
-		auto contents = archive.GetText(entry);
+		auto contents = archive.GetText(entry.c_str());
 		std::cout << "File" << std::endl;
 		std::cout << "  Name: " << entry << std::endl;
 		std::cout << "  Contents: " << contents << std::endl;
@@ -64,7 +64,7 @@ int main() {
 
 	std::filesystem::create_directory("Copies");
 	for (const auto& textureFile : files) {
-		auto contents = archive.GetData(textureFile);
+		auto contents = archive.GetData(textureFile.c_str());
 		std::filesystem::path filename = "Copies";
 		filename /= textureFile.filename();
 		std::ofstream file(filename, std::ios::binary);
