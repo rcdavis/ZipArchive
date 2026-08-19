@@ -45,11 +45,11 @@ int main() {
 	archive.AddTextEntries(sources);
 
 	std::vector<std::filesystem::path> files = {
-		"assets/textures/MenuPointer.png",
-		"assets/textures/MenuPlay.png",
-		"assets/textures/MenuOptions.png",
-		"assets/textures/MenuCredits.png",
-		"assets/textures/MenuExit.png"
+		"res/textures/MenuPointer.png",
+		"res/textures/MenuPlay.png",
+		"res/textures/MenuOptions.png",
+		"res/textures/MenuCredits.png",
+		"res/textures/MenuExit.png"
 	};
 
 	archive.AddFiles(files);
