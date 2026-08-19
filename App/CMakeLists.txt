@@ -12,6 +12,8 @@ target_include_directories(App PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+target_compile_features(App PRIVATE cxx_std_20)
+
 target_link_libraries(App PRIVATE
     zip
 )
