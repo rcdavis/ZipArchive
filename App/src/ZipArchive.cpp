@@ -49,22 +49,27 @@ std::vector<std::string> ZipArchive::GetEntries() {
 }
 
 std::string ZipArchive::GetText(const char* const filepath) {
+	if (!mArchive) {
+		std::cerr << "ZIP archive is not open" << std::endl;
+		return {};
+	}
+
 	const zip_int64_t index = zip_name_locate(mArchive, filepath, 0);
 	if (index < 0) {
-		std::cerr << "Failed to find " << filepath << " within the ZIP archive" << std::endl;
+		std::cerr << "Failed to find " << filepath << " within the ZIP archive: " << zip_strerror(mArchive) << std::endl;
 		return {};
 	}
 
 	zip_stat_t st;
 	zip_stat_init(&st);
 	if (zip_stat_index(mArchive, index, 0, &st) != 0) {
-		std::cerr << "Failed to get info for file " << filepath << std::endl;
+		std::cerr << "Failed to get info for file " << filepath << ": " << zip_strerror(mArchive) << std::endl;
 		return {};
 	}
 
 	zip_file_t* const zf = zip_fopen_index(mArchive, index, 0);
 	if (!zf) {
-		std::cerr << "Failed to open file " << filepath << std::endl;
+		std::cerr << "Failed to open file " << filepath << ": " << zip_strerror(mArchive) << std::endl;
 		return {};
 	}
 
@@ -76,22 +81,27 @@ std::string ZipArchive::GetText(const char* const filepath) {
 }
 
 std::vector<char> ZipArchive::GetData(const char* const filepath) {
+	if (!mArchive) {
+		std::cerr << "ZIP archive is not open" << std::endl;
+		return {};
+	}
+
 	const zip_int64_t index = zip_name_locate(mArchive, filepath, 0);
 	if (index < 0) {
-		std::cerr << "Failed to find " << filepath << " within the ZIP archive" << std::endl;
+		std::cerr << "Failed to find " << filepath << " within the ZIP archive: " << zip_strerror(mArchive) << std::endl;
 		return {};
 	}
 
 	zip_stat_t st;
 	zip_stat_init(&st);
 	if (zip_stat_index(mArchive, index, 0, &st) != 0) {
-		std::cerr << "Failed to get info for file " << filepath << std::endl;
+		std::cerr << "Failed to get info for file " << filepath << ": " << zip_strerror(mArchive) << std::endl;
 		return {};
 	}
 
 	zip_file_t* const zf = zip_fopen_index(mArchive, index, 0);
 	if (!zf) {
-		std::cerr << "Failed to open file " << filepath << std::endl;
+		std::cerr << "Failed to open file " << filepath << ": " << zip_strerror(mArchive) << std::endl;
 		return {};
 	}
 
@@ -119,14 +129,19 @@ bool ZipArchive::AddFiles(const std::vector<std::filesystem::path>& files) {
 }
 
 bool ZipArchive::AddText(const char* const filepath, const std::string& text) {
+	if (!mArchive) {
+		std::cerr << "ZIP archive is not open" << std::endl;
+		return {};
+	}
+
 	zip_source_t* const source = zip_source_buffer(mArchive, std::data(text), std::size(text), 0);
 	if (!source) {
-		std::cerr << "Failed to create zip source for " << filepath << std::endl;
+		std::cerr << "Failed to create zip source for " << filepath << ": " << zip_strerror(mArchive) << std::endl;
 		return false;
 	}
 
 	if (zip_file_add(mArchive, filepath, source, ZIP_FL_OVERWRITE | ZIP_FL_ENC_UTF_8) < 0) {
-		std::cerr << "Failed to add file " << filepath << " to ZIP archive" << std::endl;
+		std::cerr << "Failed to add file " << filepath << " to ZIP archive: " << zip_strerror(mArchive) << std::endl;
 		zip_source_free(source);
 		return false;
 	}
@@ -135,21 +150,24 @@ bool ZipArchive::AddText(const char* const filepath, const std::string& text) {
 }
 
 bool ZipArchive::AddFile(const char* const filepath) {
+	if (!mArchive) {
+		std::cerr << "ZIP archive is not open" << std::endl;
+		return {};
+	}
+
 	if (!std::filesystem::exists(filepath)) {
 		std::cerr << filepath << " could not be found" << std::endl;
 		return false;
 	}
 
-	// TODO: passing -1 for len is deprecated but currently don't have
-	// latest libzip for ZIP_LENGTH_TO_END.
-	zip_source_t* const source = zip_source_file(mArchive, filepath, 0, -1);
+	zip_source_t* const source = zip_source_file(mArchive, filepath, 0, ZIP_LENGTH_TO_END);
 	if (!source) {
-		std::cerr << "Failed to create zip source for " << filepath << std::endl;
+		std::cerr << "Failed to create zip source for " << filepath << ": " << zip_strerror(mArchive) << std::endl;
 		return false;
 	}
 
 	if (zip_file_add(mArchive, filepath, source, ZIP_FL_OVERWRITE | ZIP_FL_ENC_UTF_8) < 0) {
-		std::cerr << "Failed to add file " << filepath << " to ZIP archive" << std::endl;
+		std::cerr << "Failed to add file " << filepath << " to ZIP archive: " << zip_strerror(mArchive) << std::endl;
 		zip_source_free(source);
 		return false;
 	}
