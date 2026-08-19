@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <array>
 
 #include "ZipArchive.h"
 
@@ -44,7 +45,7 @@ int main() {
 	archive.Open("Output2.zip", true);
 	archive.AddTextEntries(sources);
 
-	std::vector<std::filesystem::path> files = {
+	constexpr std::array<const char*, 5> files = {
 		"res/textures/MenuPointer.png",
 		"res/textures/MenuPlay.png",
 		"res/textures/MenuOptions.png",
@@ -64,9 +65,8 @@ int main() {
 
 	std::filesystem::create_directory("Copies");
 	for (const auto& textureFile : files) {
-		auto contents = archive.GetData(textureFile.c_str());
-		std::filesystem::path filename = "Copies";
-		filename /= textureFile.filename();
+		auto contents = archive.GetData(textureFile);
+		const std::filesystem::path filename = "Copies" / std::filesystem::path(textureFile).filename();
 		std::ofstream file(filename, std::ios::binary);
 		if (file) {
 			file.write(contents.data(), contents.size());

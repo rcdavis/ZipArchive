@@ -120,9 +120,9 @@ bool ZipArchive::AddTextEntries(const std::vector<std::pair<std::filesystem::pat
 	return true;
 }
 
-bool ZipArchive::AddFiles(const std::vector<std::filesystem::path>& files) {
+bool ZipArchive::AddFiles(std::span<const char* const> files) {
 	for (const auto& file : files) {
-		if (!AddFile(file.c_str()))
+		if (!AddFile(file))
 			return false;
 	}
 	return true;

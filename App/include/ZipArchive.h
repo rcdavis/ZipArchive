@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <span>
 
 class ZipArchive {
 public:
@@ -20,7 +21,7 @@ public:
 	std::vector<char> GetData(const char* const filepath);
 
 	bool AddTextEntries(const std::vector<std::pair<std::filesystem::path, std::string>>& entries);
-	bool AddFiles(const std::vector<std::filesystem::path>& files);
+	bool AddFiles(std::span<const char* const> files);
 	bool AddText(const char* const filepath, const std::string &text);
 	bool AddFile(const char* const filepath);
 
